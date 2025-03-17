@@ -11,5 +11,5 @@ urlpatterns = [
     path('order/<int:product_id>/', place_order, name='place_order'),
     path('like/<int:product_id>/', like_product, name='like_product'),
     path('customers/', customer_table, name='customer_table'),
-    path('customers/add/', add_customer, name='add_customer'),
+    path('add-customer/', add_customer, name='add_customer'),
 ]

@@ -2274,9 +2274,12 @@
                                 </div>
                             </div>
                             <div id="table-customers-replace-element">
-                                <button class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-plus"
-                                                                                                  data-fa-transform="shrink-3 down-2"></span><span
-                                        class="d-none d-sm-inline-block ms-1">New</span></button>
+                                <a href="{% url 'myapp:add_customer' %}">
+                                    <button class="btn btn-falcon-default btn-sm" type="button"><span
+                                            class="fas fa-plus"
+                                            data-fa-transform="shrink-3 down-2"></span><span
+                                            class="d-none d-sm-inline-block ms-1">New</span></button>
+                                </a>
                                 <button class="btn btn-falcon-default btn-sm mx-2" type="button"><span
                                         class="fas fa-filter" data-fa-transform="shrink-3 down-2"></span><span
                                         class="d-none d-sm-inline-block ms-1">Filter</span></button>

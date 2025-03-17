@@ -128,7 +128,8 @@ def add_customer(request):
         form = CustomerForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('customer_table')
+            messages.success(request, "Customer successfully added!")
+            return redirect('myapp:customer_table')
     else:
         form = CustomerForm()
-    return render(request, 'customers/add_customer.html', {'form': form})
+    return render(request, 'myapp/customer_add.html', {'form': form})
