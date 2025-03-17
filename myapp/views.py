@@ -1,11 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
-from myapp.models import Category, Product
+from myapp.models import Category, Product, Customer, Order, Like
 from django.contrib import messages
-from .models import Order, Like
 import re
-from django.http import JsonResponse
+from .forms import CustomerForm
 
 
 def index(request):
@@ -117,3 +116,19 @@ def like_product(request, product_id):
         messages.success(request, 'You liked this product!')
 
     return redirect('myapp:product_detail', product_id=product.id)
+
+
+def customer_table(request):
+    customers = Customer.objects.all()
+    return render(request, 'myapp/customers.html', {'customers': customers})
+
+
+def add_customer(request):
+    if request.method == 'POST':
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('customer_table')
+    else:
+        form = CustomerForm()
+    return render(request, 'customers/add_customer.html', {'form': form})

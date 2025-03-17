@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import Group, UserAdmin
 from django.utils.html import format_html
-from myapp.models import Product, Category, Order, ProductImage
+from myapp.models import Product, Category, Order, ProductImage, Customer
 from users.models import CustomUser
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
@@ -70,3 +70,10 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer_name', 'customer_phone', 'product')
     search_fields = ('customer_name', 'customer_phone', 'product__name')
     list_filter = ('created_at',)
+
+
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'phone', 'billing_address', 'joined_date')  # Admin panelda ko‘rinadigan ustunlar
+    search_fields = ('name', 'email', 'phone')  # Qidirish uchun maydonlar
+    list_filter = ('billing_address',)  # Filtr bo‘yicha qidirish

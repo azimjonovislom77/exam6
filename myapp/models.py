@@ -1,6 +1,8 @@
+import datetime
 from _decimal import Decimal
 from django.db import models
 from users.models import CustomUser
+from django.utils.timezone import now
 
 
 class Category(models.Model):
@@ -65,3 +67,14 @@ class Like(models.Model):
 
     def __str__(self):
         return f"{self.user.email} liked {self.product.name}"
+
+
+class Customer(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=20)
+    billing_address = models.TextField()
+    joined_date = models.DateTimeField(default=now)
+
+    def __str__(self):
+        return self.name
