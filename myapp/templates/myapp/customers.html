@@ -2325,11 +2325,16 @@
                                     </td>
                                     <td class="name align-middle white-space-nowrap py-2">
                                         <a href="app/e-commerce/customer-details.html">
-                                            <div class="d-flex d-flex align-items-center">
+                                            <div class="d-flex align-items-center">
                                                 <div class="avatar avatar-xl me-2">
-                                                    <div class="avatar-name rounded-circle">
-                                                        <span>{{ customer.name|first }}{{ customer.name.split|last|first }}</span>
-                                                    </div>
+                                                    {% if customer.image %}
+                                                        <img src="{{ customer.get_absolute_url }}" alt="{{ customer.name }}"
+                                                             class="rounded-circle" width="50" height="50">
+                                                    {% else %}
+                                                        <div class="avatar-name rounded-circle">
+                                                            <span>{{ customer.name|first }}{{ customer.name.split|last|first }}</span>
+                                                        </div>
+                                                    {% endif %}
                                                 </div>
                                                 <div class="flex-1">
                                                     <h5 class="mb-0 fs--1">{{ customer.name }}</h5>
@@ -2337,6 +2342,7 @@
                                             </div>
                                         </a>
                                     </td>
+
                                     <td class="email align-middle py-2">
                                         <a href="mailto:{{ customer.email }}">{{ customer.email }}</a>
                                     </td>
@@ -2359,8 +2365,10 @@
                                             <div class="dropdown-menu dropdown-menu-end border py-0"
                                                  aria-labelledby="customer-dropdown-{{ forloop.counter }}">
                                                 <div class="bg-white py-2">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item text-danger" href="#">Delete</a>
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'myapp:edit_customer' customer.id %}">Edit</a>
+                                                    <a class="dropdown-item text-danger"
+                                                       href="{% url 'myapp:delete_customer' customer.id %}">Delete</a>
                                                 </div>
                                             </div>
                                         </div>

@@ -125,11 +125,33 @@ def customer_table(request):
 
 def add_customer(request):
     if request.method == 'POST':
-        form = CustomerForm(request.POST)
+        form = CustomerForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            messages.success(request, "Customer successfully added!")
             return redirect('myapp:customer_table')
     else:
         form = CustomerForm()
+
     return render(request, 'myapp/customer_add.html', {'form': form})
+
+
+def edit_customer(request, customer_id):
+    customer = get_object_or_404(Customer, id=customer_id)
+
+    if request.method == "POST":
+        form = CustomerForm(request.POST, instance=customer)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Customer updated successfully!")
+            return redirect('myapp:customer_table')
+    else:
+        form = CustomerForm(instance=customer)
+
+    return render(request, 'myapp/customer_edit.html', {'form': form})
+
+
+def delete_customer(request, customer_id):
+    customer = get_object_or_404(Customer, id=customer_id)
+    customer.delete()
+    messages.success(request, "Customer deleted successfully!")
+    return redirect('myapp:customer_table')
