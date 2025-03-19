@@ -74,6 +74,6 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'phone', 'billing_address', 'joined_date')  # Admin panelda ko‘rinadigan ustunlar
-    search_fields = ('name', 'email', 'phone')  # Qidirish uchun maydonlar
-    list_filter = ('billing_address',)  # Filtr bo‘yicha qidirish
+    list_display = ('name', 'email', 'phone', 'billing_address', 'joined_date')
+    search_fields = ('name', 'email', 'phone') 
+    list_filter = ('billing_address',) 
