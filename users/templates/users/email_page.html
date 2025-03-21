@@ -69,7 +69,7 @@
 <body>
 
     <div class="container">
-        <h2>Welcome, {{ user.username }}! 🎉</h2>
+        <h2>Welcome, {{ user.username }}!</h2>
         <p>You have successfully registered on our website.</p>
         <p>Thank you for joining us!</p>
 
@@ -88,11 +88,11 @@
                 countdownElement.textContent = seconds;
                 setTimeout(countdown, 1000);
             } else {
-                window.location.href = "{% url 'myapp:index' %}"; // Home page URL
+                window.location.href = "{% url 'myapp:index' %}";
             }
         }
 
-        setTimeout(countdown, 1000); // Funksiyani ishga tushirish
+        setTimeout(countdown, 1000);
     </script>
 
 </body>

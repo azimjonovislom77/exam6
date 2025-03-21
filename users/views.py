@@ -61,16 +61,15 @@ def logout_page(request):
 
 
 class RegisterView(CreateView):
-    model = User  # Agar Custom User bo'lsa, o'z modelingizni qo'ying
+    model = User
     form_class = CustomUserCreationForm
-    template_name = 'users/register.html'  # Ro‘yxatdan o‘tish sahifasi
-    success_url = reverse_lazy('users:email_page')  # Foydalanuvchi qaysi sahifaga o'tishini belgilash
+    template_name = 'users/register.html'
+    success_url = reverse_lazy('users:email_page')
 
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
 
-        # Email jo‘natish
         mail_subject = 'Successful Registration'
         message = render_to_string('users/email_page.html', {'user': user})
 
@@ -80,10 +79,10 @@ class RegisterView(CreateView):
             settings.EMAIL_HOST_USER,
             [user.email],
         )
-        email.content_subtype = "html"  # HTML formatda yuborish
+        email.content_subtype = "html"
         email.send()
 
-        return redirect(self.success_url)  # `email_page` ga o'tish
+        return redirect(self.success_url)
 
 
 class EmailPageView(TemplateView):
