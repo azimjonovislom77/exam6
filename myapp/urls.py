@@ -23,7 +23,7 @@
 
 
 from django.urls import path
-from .views import IndexView, ProductListView, ProductDetailView, CategoryProductsView, PlaceOrderView, LikeProductView, CustomerListView, CustomerCreateView, CustomerUpdateView, CustomerDeleteView, CustomerDetailView
+from .views import IndexView, ProductListView, ProductDetailView, CategoryProductsView, place_order, LikeProductView, CustomerListView, CustomerCreateView, CustomerUpdateView, CustomerDeleteView, CustomerDetailView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -34,7 +34,7 @@ urlpatterns = [
     path('product_list/', ProductListView.as_view(), name='product_list'),
     path('product_detail/<int:pk>/', ProductDetailView.as_view(), name='product_detail'),
     path('category_products/<int:category_id>/', CategoryProductsView.as_view(), name='category_products'),
-    path('order/<int:product_id>/', PlaceOrderView.as_view(), name='place_order'),
+    path('order/<int:product_id>/', place_order, name='place_order'),
     path('like/<int:product_id>/', LikeProductView.as_view(), name='like_product'),
     path('customers/', CustomerListView.as_view(), name='customer_table'),
     path('add-customer/', CustomerCreateView.as_view(), name='add_customer'),

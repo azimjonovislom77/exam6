@@ -6,6 +6,18 @@
 # import re
 # from .forms import CustomerForm
 #
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.contrib import messages
+from django.db.models import Q
+import re
+from .models import Category, Product, Customer, Order, Like
+from .forms import CustomerForm
+
+
 #
 # def index(request):
 #     search_query = request.GET.get('q', '')
@@ -55,52 +67,53 @@
 #     return render(request, 'myapp/product-list.html', {'category': category, 'products': products})
 #
 #
-# def place_order(request, product_id):
-#     product = get_object_or_404(Product, id=product_id)
-#     if request.method == "POST":
-#         customer_name = request.POST.get('customer_name')
-#         customer_phone = request.POST.get('customer_phone')
-#         quantity = request.POST.get('quantity', '')
-#         uzbekistan_phone_regex = re.compile(r'^\+998\d{9}$')
-#         if not uzbekistan_phone_regex.match(customer_phone):
-#             messages.error(request, 'Invalid phone number! Please enter a valid Uzbekistan number (+998 XX XXX-XX-XX)')
-#             return redirect('myapp:index')
-#
-#         if not customer_name or not customer_phone or not quantity:
-#             messages.error(request, 'Iltimos, barcha maydonlarni to‘ldiring!')
-#             return redirect('place_order', product_id=product.id)
-#
-#         try:
-#             quantity = int(quantity)
-#             if quantity <= 0:
-#                 raise ValueError
-#         except ValueError:
-#             messages.error(request, 'Noto‘g‘ri son! Iltimos, musbat butun son kiriting')
-#             return redirect('place_order', product_id=product.id)
-#
-#         if product.quantity < quantity:
-#             messages.error(request, f'Kechirasiz, faqat {product.quantity} ta mahsulot qolgan!')
-#             return redirect('place_order', product_id=product.id)
-#
-#         order = Order.objects.create(
-#             customer_name=customer_name,
-#             customer_phone=customer_phone,
-#             product=product,
-#             quantity=quantity
-#         )
-#         order.save()
-#
-#         product.quantity -= quantity
-#         product.save()
-#
-#         messages.success(request, 'Your order has been placed successfully!')
-#         return redirect('myapp:index')
-#
-#     context = {
-#         'product': product
-#     }
-#     return render(request, 'myapp/order.html', context)
-#
+def place_order(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    if request.method == "POST":
+        customer_name = request.POST.get('customer_name')
+        customer_phone = request.POST.get('customer_phone')
+        quantity = request.POST.get('quantity', '')
+        uzbekistan_phone_regex = re.compile(r'^\+998\d{9}$')
+        if not uzbekistan_phone_regex.match(customer_phone):
+            messages.error(request, 'Invalid phone number! Please enter a valid Uzbekistan number (+998 XX XXX-XX-XX)')
+            return redirect('myapp:index')
+
+        if not customer_name or not customer_phone or not quantity:
+            messages.error(request, 'Iltimos, barcha maydonlarni to‘ldiring!')
+            return redirect('place_order', product_id=product.id)
+
+        try:
+            quantity = int(quantity)
+            if quantity <= 0:
+                raise ValueError
+        except ValueError:
+            messages.error(request, 'Noto‘g‘ri son! Iltimos, musbat butun son kiriting')
+            return redirect('place_order', product_id=product.id)
+
+        if product.quantity < quantity:
+            messages.error(request, f'Kechirasiz, faqat {product.quantity} ta mahsulot qolgan!')
+            return redirect('place_order', product_id=product.id)
+
+        order = Order.objects.create(
+            customer_name=customer_name,
+            customer_phone=customer_phone,
+            product=product,
+            quantity=quantity
+        )
+        order.save()
+
+        product.quantity -= quantity
+        product.save()
+
+        messages.success(request, 'Your order has been placed successfully!')
+        return redirect('myapp:index')
+
+    context = {
+        'product': product
+    }
+    return render(request, 'myapp/order.html', context)
+
+
 #
 # @login_required
 # def like_product(request, product_id):
@@ -161,17 +174,6 @@
 #     return render(request, 'myapp/customer-details.html')
 
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
-from django.contrib import messages
-from django.db.models import Q
-import re
-from .models import Category, Product, Customer, Order, Like
-from .forms import CustomerForm
-
-
 class IndexView(ListView):
     model = Product
     template_name = 'myapp/index.html'
@@ -230,39 +232,39 @@ class CategoryProductsView(ListView):
         return context
 
 
-class PlaceOrderView(FormView):
-    template_name = 'myapp/order.html'
-    success_url = reverse_lazy('myapp:index')
-
-    def post(self, request, *args, **kwargs):
-        product = get_object_or_404(Product, id=self.kwargs['product_id'])
-        customer_name = request.POST.get('customer_name')
-        customer_phone = request.POST.get('customer_phone')
-        quantity = request.POST.get('quantity', '')
-
-        uzbekistan_phone_regex = re.compile(r'^\+998\d{9}$')
-        if not uzbekistan_phone_regex.match(customer_phone):
-            messages.error(request, 'Invalid phone number! Please enter a valid Uzbekistan number (+998 XX XXX-XX-XX)')
-            return redirect('myapp:index')
-
-        try:
-            quantity = int(quantity)
-            if quantity <= 0:
-                raise ValueError
-        except ValueError:
-            messages.error(request, 'Noto‘g‘ri son! Iltimos, musbat butun son kiriting')
-            return redirect('place_order', product_id=product.id)
-
-        if product.quantity < quantity:
-            messages.error(request, f'Kechirasiz, faqat {product.quantity} ta mahsulot qolgan!')
-            return redirect('place_order', product_id=product.id)
-
-        Order.objects.create(customer_name=customer_name, customer_phone=customer_phone, product=product,
-                             quantity=quantity)
-        product.quantity -= quantity
-        product.save()
-        messages.success(request, 'Your order has been placed successfully!')
-        return redirect('myapp:index')
+# class PlaceOrderView(FormView):
+#     template_name = 'myapp/order.html'
+#     success_url = reverse_lazy('myapp:index')
+#
+#     def post(self, request, *args, **kwargs):
+#         product = get_object_or_404(Product, id=self.kwargs['product_id'])
+#         customer_name = request.POST.get('customer_name')
+#         customer_phone = request.POST.get('customer_phone')
+#         quantity = request.POST.get('quantity', '')
+#
+#         uzbekistan_phone_regex = re.compile(r'^\+998\d{9}$')
+#         if not uzbekistan_phone_regex.match(customer_phone):
+#             messages.error(request, 'Invalid phone number! Please enter a valid Uzbekistan number (+998 XX XXX-XX-XX)')
+#             return redirect('myapp:index')
+#
+#         try:
+#             quantity = int(quantity)
+#             if quantity <= 0:
+#                 raise ValueError
+#         except ValueError:
+#             messages.error(request, 'Noto‘g‘ri son! Iltimos, musbat butun son kiriting')
+#             return redirect('place_order', product_id=product.id)
+#
+#         if product.quantity < quantity:
+#             messages.error(request, f'Kechirasiz, faqat {product.quantity} ta mahsulot qolgan!')
+#             return redirect('place_order', product_id=product.id)
+#
+#         Order.objects.create(customer_name=customer_name, customer_phone=customer_phone, product=product,
+#                              quantity=quantity)
+#         product.quantity -= quantity
+#         product.save()
+#         messages.success(request, 'Your order has been placed successfully!')
+#         return redirect('myapp:index')
 
 
 class LikeProductView(LoginRequiredMixin, DetailView):
@@ -315,3 +317,5 @@ class CustomerDeleteView(DeleteView):
 class CustomerDetailView(DetailView):
     model = Customer
     template_name = 'myapp/customer-details.html'
+
+
